@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# C extensions
+*.c
+*.cpp
+*.cxx
+*.c++
+
+# Distribution / packaging
+.eggs/
+.pip/
+dist/
+build/
+develop/
+
+# Python IDE files
+.vscode/
+.idea/
+
+# Local configuration
+*.py[cod]
+*.so
+.coverage
+.DS_Store
+.env
+.ipynb_checkpoints
+.pytest_cache/
+nosetests.xml
+coverage.xml
+htmlcov/
+
+# Unit test/coverage reports
+*.log
+*.out
+*.rst
+
+# Django-specific
+local_settings.py
+db.sqlite3
+
+# Flask-specific
+instance/
+.flaskenv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+
+# pdf
+*.pdf
