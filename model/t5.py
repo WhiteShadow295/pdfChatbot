@@ -5,6 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from dotenv import load_dotenv
+import logging
 import tempfile
 import os
 import re
@@ -31,7 +32,7 @@ class T5Model:
             model_name="sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
             )
             
-            print("T5 Model Initialized")
+            logging.info("T5 Model Initialized")
         
         return cls._instance
   
@@ -104,6 +105,9 @@ class T5Model:
 
     def faiss(self) -> bool:
         try:
+            
+            logging.debug("Creating vector store")
+            
             self._vectorstore = FAISS.from_documents(self._pdf_text, self._embeddings)
             return True
         except Exception as e:
@@ -113,6 +117,9 @@ class T5Model:
     
     def retrieve(self, k:int = 7, search_type: str = "mmr") -> bool:
         try:
+            
+            logging.debug("Creating retriever")
+            
             self._retriever = self._vectorstore.as_retriever(
                 search_kwargs={"k":k},
                 search_type=search_type
@@ -129,6 +136,7 @@ class T5Model:
         
     def query(self, question: str) -> str:
 
+        logging.debug(f"Query : {question}")
         qa_chain = ConversationalRetrievalChain.from_llm(self._llm, self._retriever, return_source_documents=True)
 
         result = qa_chain({
@@ -138,6 +146,6 @@ class T5Model:
 
         self._chat_history.append((question, result["answer"]))
         
-        print(result["answer"])
+        logging.debug(f"Result : {result}")
         
         return result["answer"]

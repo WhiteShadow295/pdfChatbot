@@ -6,6 +6,10 @@ import logging
 class mainUI:
 
     def __init__(self):
+        logging.basicConfig(level=logging.INFO,
+                            format='%(asctime)s %(levelname)s %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S')
+        
         st.set_page_config(page_title="Chat with PDF", page_icon=":books:")
         
         if "messages" not in st.session_state:
@@ -45,20 +49,20 @@ class mainUI:
         
         with st.spinner("Please wait while we process the PDF..."):
             pdf_status= self.t5.preprocess(docs)
-            print(f"Preprocess : {pdf_status}")
+            logging.debug(f"Preprocess : {pdf_status}")
                    
         with st.spinner("Storing into vector database...."):           
             faiss_status= self.t5.faiss()
-            print(f"faiss_status : {faiss_status}")
+            logging.debug(f"faiss_status : {faiss_status}")
             
         with st.spinner("Almost done..."):            
             retrieve_status= self.t5.retrieve()
-            print(f"retrieve_status : {retrieve_status}")
+            logging.debug(f"retrieve_status : {retrieve_status}")
+            
+        logging.info("PDF Uploaded Successfully!")
             
         st.success("PDF Uploaded Successfully!")
         st.toast("PDF Uploaded Successfully!")
-        
-    
            
     def displayChatMessageUI(self):
         for message in st.session_state.messages:
@@ -80,6 +84,7 @@ class mainUI:
         with st.spinner("Thinking...."):
             try:
                 if st.session_state.current_doc_id is not None:
+                    logging.debug(f"Query : {message}")
                     result = self.t5.query(message)
                 else:
                     result = "Please upload a PDF before asking."
