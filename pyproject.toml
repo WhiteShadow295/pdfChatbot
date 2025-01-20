@@ -16,11 +16,11 @@ langchain = "^0.3.14"
 langchain-huggingface = "^0.1.2"
 pypdf = "^5.1.0"
 streamlit = "^1.41.1"
-pytest = "^8.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core"]
