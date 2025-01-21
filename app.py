@@ -25,7 +25,6 @@ class mainUI:
     def titleUI(self):
         st.title("PDF Chatbot :books:")
         st.markdown("This is a chatbot that allows you to upload PDFs and ask questions about them.")
-     
 
     def uploadPdfUI(self):
         
@@ -40,7 +39,6 @@ class mainUI:
                 self.processPdf(docs)               
                 st.session_state.current_doc_id = docs._file_urls.file_id
            
-    
     @st.dialog("Processing PDF")      
     def processPdf(self, docs):
         
@@ -94,8 +92,7 @@ class mainUI:
         # AI response
         st.session_state.messages.append({"role": "ai", "content": result})
         st.rerun()
-        
-    
+          
     def clearHistory(self):
         
         with st.sidebar:
