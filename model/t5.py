@@ -4,6 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
+from transformers import T5Tokenizer
 from dotenv import load_dotenv
 import logging
 import tempfile
@@ -32,11 +33,12 @@ class T5Model:
             model_name="sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
             )
             
+            cls._tokenizer = T5Tokenizer.from_pretrained("google/flan-t5-large", use_fast=True, legacy=False)
+            
             logging.info("T5 Model Initialized")
         
         return cls._instance
-  
-      
+    
     def read_pdf(self, pdf) -> list:
         try:
             ## save pdf to a temporary file
@@ -56,17 +58,18 @@ class T5Model:
         except Exception as e:
             return f"An error occurred: {e}"
 
+    def _flan_t5_len(self, text) -> int:    
+        return len(self._tokenizer.encode(text, truncation=False))
 
     def _text_splitter(self, text) -> list:
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=40,
-            length_function=len
+            chunk_size=400,
+            chunk_overlap=60,
+            length_function=self._flan_t5_len
         )
         
         return text_splitter.split_documents(text)
     
-   
     def _remove_pua(self, text) -> str:       
         """ 
         Remove PUA (Private Use Area) characters from text 
@@ -82,7 +85,6 @@ class T5Model:
         text = re.sub(r'[\U00100000-\U0010fffd]', '', text)
         return text
     
-    
     def _remove_characters(self, pdf_text) -> list:
         for i in range(len(pdf_text)):
             pdf_text[i].page_content = pdf_text[i].page_content.replace("-\n", "") # remove hyphenation
@@ -91,17 +93,15 @@ class T5Model:
             pdf_text[i].page_content = re.sub(r'\s+', ' ', pdf_text[i].page_content) # remove extra spaces
         return pdf_text
  
-    
     def preprocess(self, pdf) -> bool:
         try:
             pdf_text = self.read_pdf(pdf)
-            pdf_text = self._text_splitter(pdf_text)
-            self._pdf_text = self._remove_characters(pdf_text)
+            pdf_text = self._remove_characters(pdf_text)
+            self._pdf_text = self._text_splitter(pdf_text)    
             return True
         except Exception as e:
             print(f"An error occurred: {e}")
             return False
-
 
     def faiss(self) -> bool:
         try:
@@ -113,7 +113,6 @@ class T5Model:
         except Exception as e:
             print(f"An error occurred: {e}")
             return False
-    
     
     def retrieve(self, k:int = 7, search_type: str = "mmr") -> bool:
         try:
@@ -128,12 +127,10 @@ class T5Model:
         except Exception as e:
             print(f"An error occurred: {e}")
             return False
-        
-        
+             
     def clear_history(self):
         self._chat_history = []
-        
-        
+             
     def query(self, question: str) -> dict:
 
         logging.debug(f"Query : {question}")

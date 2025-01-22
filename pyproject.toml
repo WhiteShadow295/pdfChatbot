@@ -16,6 +16,8 @@ langchain = "^0.3.14"
 langchain-huggingface = "^0.1.2"
 pypdf = "^5.1.0"
 streamlit = "^1.41.1"
+simsimd = "^6.2.1"
+sentencepiece = "^0.2.0"
 
 
 [[tool.poetry.source]]
