@@ -134,7 +134,7 @@ class T5Model:
         self._chat_history = []
         
         
-    def query(self, question: str) -> str:
+    def query(self, question: str) -> dict:
 
         logging.debug(f"Query : {question}")
         qa_chain = ConversationalRetrievalChain.from_llm(self._llm, self._retriever, return_source_documents=True)
@@ -148,4 +148,4 @@ class T5Model:
         
         logging.debug(f"Result : {result}")
         
-        return result["answer"]
+        return {"answer": result["answer"], "reference": result["source_documents"]}

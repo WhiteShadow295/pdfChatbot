@@ -66,7 +66,17 @@ class mainUI:
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.write(message["content"])
-    
+                
+                if message["role"] == "ai" and "reference" in message:
+                    with st.expander("References"):
+                        num = 1
+                        
+                        for reference in message["reference"]:
+                            st.subheader(f"Source Number {num}", divider=True)
+                            st.write(f"**Extract From:** \n\n{reference.page_content}")
+                            st.write(f"**Extract From Page:** {reference.metadata["page_label"]}")
+                            num += 1
+ 
     def displayLastChatMessageUI(self):
         with st.chat_message(st.session_state.messages[-1]["role"]):
                 st.write(st.session_state.messages[-1]["content"])
@@ -84,13 +94,18 @@ class mainUI:
                 if st.session_state.current_doc_id is not None:
                     logging.debug(f"Query : {message}")
                     result = self.t5.query(message)
+                    
                 else:
                     result = "Please upload a PDF before asking."
             except Exception as e:
                 result = f"{e}. I am sorry, I could not understand that. Please try again."   
         
         # AI response
-        st.session_state.messages.append({"role": "ai", "content": result})
+        if "reference" in result:
+            st.session_state.messages.append({"role": "ai", "content": result["answer"], "reference": result["reference"]})
+        else:
+            st.session_state.messages.append({"role": "ai", "content": result})
+            
         st.rerun()
           
     def clearHistory(self):
@@ -111,9 +126,7 @@ class mainUI:
         input = self.chatInputUI()
         
         if input:
-            self.chatMessageHandler(input)
-        
-        
+            self.chatMessageHandler(input)       
     
 if __name__ == "__main__":
     mainUI().display()
