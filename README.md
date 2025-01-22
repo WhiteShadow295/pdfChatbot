@@ -18,6 +18,7 @@ poetry install
 ```
 poetry run streamlit run app.py
 ```
+_Note: Remove the `poerty run` if you are inside poetry's venv_
 
 ### Docker
 If you don't want to download poetry, you can also use docker container to run this application. follow the step below:
