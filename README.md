@@ -4,7 +4,7 @@
 
 This is a PDF chatbot that use RAG approach
 
-### Poetry
+## Poetry
 To run the application you would need to install `poetry`
 
 Refer to [official website](https://python-poetry.org/docs/) to download poetry 
@@ -20,7 +20,7 @@ poetry run streamlit run app.py
 ```
 _Note: Remove the `poerty run` if you are inside poetry's venv_
 
-### Docker
+## Docker
 If you don't want to download poetry, you can also use docker container to run this application. follow the step below:
 1. Make sure you install docker desktop & login
 2. Create a docker image first:
