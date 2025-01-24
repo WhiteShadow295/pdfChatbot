@@ -136,7 +136,7 @@ class T5Model:
         logging.debug(f"Query : {question}")
         qa_chain = ConversationalRetrievalChain.from_llm(self._llm, self._retriever, return_source_documents=True)
 
-        result = qa_chain({
+        result = qa_chain.invoke({
                     "question": question,
                     "chat_history": self._chat_history
                 })
